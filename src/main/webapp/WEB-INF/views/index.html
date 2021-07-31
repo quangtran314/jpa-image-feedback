@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <img id="img-of-the-day" width=400px height=400px>
+    <script>
+        let query = 'https://api.nasa.gov/planetary/apod?api_key=FZTFtUF37m2mfSzx111DJehie1m8xZtF79Adgau8';
+        let request = new XMLHttpRequest();
+        request.open('GET', query);
+        request.onload = function() {
+            if (request.status === 200) {
+                let response = JSON.parse(request.responseText);
+                document.getElementById('img-of-the-day').setAttribute('src', response.url);
+            }
+        };
+        request.send();
+    </script>
+</div>
+<div>
+    <form method="post" th:object="${feedback}">
+        <div>
+            <input type="number" th:field="*{rate}" min="1" max="5">
+        </div>
+        <div>
+            <span><strong>Author:</strong></span>
+            <input type="text" th:field="*{author}"/>
+        </div>
+        <div>
+            <span><strong>Feedback:</strong></span>
+            <textarea th:field="*{comment}"></textarea>
+        </div>
+        <input type="submit" value="Comment"/>
+    </form>
+</div>
+<div>
+    <div th:each="fb : ${feedbacks}">
+        <form th:action="@{/like/{id}(id=${fb.id})}" method="post">
+            <p>+ <span th:text="${fb.rate}"></span> <span th:text="${fb.comment}"></span></p>
+            <p><span th:text="${fb.like}"></span> likes  </p>
+            <input type="submit" value="Like">
+        </form>
+        <hr>
+    </div>
+</div>
+</body>
+</html>
