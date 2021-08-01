@@ -1,5 +1,6 @@
 package com.amela.repository;
 
+import com.amela.exception.BadWordException;
 import com.amela.model.Feedback;
 import com.amela.repository.IFeedbackRepository;
 import org.hibernate.HibernateException;
@@ -19,6 +20,8 @@ import java.sql.Date;
 
 @Transactional
 public class FeedbackRepository implements IFeedbackRepository {
+
+    private static List<String> badWords = List.of("shit", "bitch", "fuck");
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -51,7 +54,12 @@ public class FeedbackRepository implements IFeedbackRepository {
     }
 
     @Override
-    public void save(Feedback feedback) {
+    public void save(Feedback feedback) throws BadWordException{
+        for(String word : badWords){
+            if(feedback.getComment().contains(word)){
+                throw new BadWordException();
+            }
+        }
         if(feedback.getId() != null){
             entityManager.merge(feedback);
         } else {

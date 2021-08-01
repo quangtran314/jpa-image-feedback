@@ -1,19 +1,18 @@
 package com.amela.controller;
 
+import com.amela.exception.BadWordException;
 import com.amela.model.Feedback;
 import com.amela.repository.IFeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Controller
 public class FeedbackController {
@@ -30,7 +29,7 @@ public class FeedbackController {
     }
 
     @PostMapping
-    public String saveFeedback(@ModelAttribute("feedback") Feedback feedback){
+    public String saveFeedback(@ModelAttribute("feedback") Feedback feedback) throws BadWordException {
         feedback.setDate(getCurrentDate());
         feedbackRepository.save(feedback);
         return "redirect:/";
@@ -50,5 +49,10 @@ public class FeedbackController {
         }catch(ParseException ex){
             throw new IllegalArgumentException(ex);
         }
+    }
+
+    @ExceptionHandler(BadWordException.class)
+    public ModelAndView showInputNotAcceptable() {
+        return new ModelAndView("inputs-not-acceptable");
     }
 }

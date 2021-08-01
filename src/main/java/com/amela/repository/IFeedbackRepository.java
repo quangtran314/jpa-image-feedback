@@ -1,5 +1,6 @@
 package com.amela.repository;
 
+import com.amela.exception.BadWordException;
 import com.amela.model.Feedback;
 
 import java.sql.Date;
@@ -12,7 +13,7 @@ public interface IFeedbackRepository {
 
     Feedback findOne(Long id);
 
-    void save(Feedback feedback);
+    void save(Feedback feedback) throws BadWordException;
 
     int likeUpdate(Long id);
 }
